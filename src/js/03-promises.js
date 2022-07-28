@@ -12,37 +12,32 @@ function onSubmitForm(e) {
   e.preventDefault();
   const amount = refs.amount.value;
   const delay = refs.delay.value;
-
+  const step = refs.step.value;
   for (let i = 1; i <= amount; i += 1) {
-    const position = i;
-
-    createPromise(position, delay)
-      .then(({ position, delay }) => {
-        Notiflix.Notify.success(
-          `✅ Fulfilled promise ${position} in ${delay}ms`
-        );
-      })
-      .catch(({ position, delay }) => {
-        Notiflix.Notify.failure(
-          `❌ Rejected promise ${position} in ${delay}ms`
-        );
-      });
+    setTimeout(() => {
+      const position = i;
+      createPromise(position, delay)
+        .then(value => {
+          Notiflix.Notify.success(`${value}`);
+        })
+        .catch(error => {
+          Notiflix.Notify.failure(`${error}`);
+        });
+    }, i * step);
   }
-
   e.target.reset();
 }
 
 function createPromise(position, delay) {
   const shouldResolve = Math.random() > 0.3;
-  const step = refs.step.value;
-  const promise = new Promise(() => {
+  const promise = new Promise((resolve, reject) => {
     setTimeout(() => {
       if (shouldResolve) {
-        console.log(`✅ Fulfilled promise ${position} in ${delay}ms`);
+        resolve(`✅ Fulfilled promise ${position} in ${delay}ms`);
       } else {
-        console.log(`❌ Rejected promise ${position} in ${delay}ms`);
+        reject(`❌ Rejected promise ${position} in ${delay}ms`);
       }
-    }, step);
+    }, delay);
   });
   return promise;
 }

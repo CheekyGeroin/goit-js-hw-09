@@ -1,58 +1,67 @@
 import flatpickr from 'flatpickr';
-import 'flatpickr/dist/flatpickr.min.css';
 import Notiflix from 'notiflix';
-
-const refs = {
-  timePicker: document.querySelector('#datetime-picker'),
-  startBtn: document.querySelector('button[data-start]'),
-};
-
-const currentDate = new Date();
-
+import 'flatpickr/dist/flatpickr.min.css';
+const flatpickr = require('flatpickr');
+const currentTime = new Date();
+const btnStart = document.querySelector('button');
+const selector = document.querySelector('input#datetime-picker');
+let deadLine = 0;
 const options = {
   enableTime: true,
   time_24hr: true,
-  defaultDate: currentDate,
+  defaultDate: currentTime,
   minuteIncrement: 1,
   onClose,
 };
-
-const calendar = flatpickr('#datetime-picker', options);
-refs.startBtn.disabled = true;
-refs.startBtn.addEventListener('click', onClose);
+flatpickr(selector, options);
 function onClose(selectedDates) {
-  if (currentDate > selectedDates[0]) {
-    Notiflix.Notify.warning('Please choose a date in the future');
+  if (currentTime > selectedDates[0]) {
+    Notiflix.Notify.failure('Please choose a date in the future');
   }
-  if (currentDate < selectedDates[0]) {
-    refs.startBtn.disabled = false;
-    const ms = selectedDates[0] - currentDate;
-    setInterval(convertMs(ms), 1000);
+  if (currentTime < selectedDates[0]) {
+    /* console.log(selectedDates[0]); */
+    deadLine = selectedDates[0];
+    removeDisable();
   }
 }
-
-function convertMs(ms) {
-  // Number of milliseconds per unit of time
-  const second = 1000;
-  const minute = second * 60;
-  const hour = minute * 60;
-  const day = hour * 24;
-
-  // Remaining days
-  const days = Math.floor(ms / day);
-  // Remaining hours
-  const hours = Math.floor((ms % day) / hour);
-  // Remaining minutes
-  const minutes = Math.floor(((ms % day) % hour) / minute);
-  // Remaining seconds
-  const seconds = Math.floor((((ms % day) % hour) % minute) / second);
-  const daysEl = document.querySelector('span[data-days]');
-  const hoursEl = document.querySelector('span[data-hours]');
-  const minutesEl = document.querySelector('span[data-minutes]');
-  const secondEl = document.querySelector('span[data-seconds]');
-  daysEl.textContent = days;
-  hoursEl.textContent = hours;
-  minutesEl.textContent = minutes;
-  secondEl.textContent = seconds;
-  return { days, hours, minutes, seconds };
+function removeDisable() {
+  btnStart.removeAttribute('disabled');
+  /* console.log('remove DISABLE'); */
+}
+btnStart.addEventListener('click', () => {
+  /* console.log('нажимаю кнопку'); */
+  onClickBtn();
+});
+function onClickBtn() {
+  const daysEl = document.querySelector('.days');
+  const hoursElement = document.querySelector('.hours');
+  const minutesElement = document.querySelector('.minutes');
+  const secondsElement = document.querySelector('.seconds');
+  function pad(value) {
+    return String(value).padStart(2, '0');
+  }
+  function timer() {
+    let today = new Date();
+    delta = deadLine - today - 1;
+    const second = pad(Math.floor(delta / 1000) % 60);
+    const minute = pad(Math.floor(delta / 1000 / 60) % 60);
+    const hour = pad(Math.floor(delta / 1000 / 60 / 60) % 24);
+    const day = pad(Math.floor(delta / 1000 / 60 / 60 / 24));
+    if (second >= 0 || minute >= 0 || hour >= 0 || day >= 0) {
+      daysEl.textContent = day;
+      hoursElement.textContent = hour;
+      minutesElement.textContent = minute;
+      secondsElement.textContent = second;
+    } else {
+      daysEl.textContent = '00';
+      hoursElement.textContent = '00';
+      minutesElement.textContent = '00';
+      secondsElement.textContent = '00';
+    }
+    /* console.log(second);
+    console.log(minute);
+    console.log(hour);
+    console.log(day); */
+  }
+  setInterval(timer, 1000);
 }
