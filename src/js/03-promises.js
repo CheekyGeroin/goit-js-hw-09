@@ -16,7 +16,8 @@ function onSubmitForm(e) {
   for (let i = 1; i <= amount; i += 1) {
     setTimeout(() => {
       const position = i;
-      createPromise(position, delay)
+      const newDelay = (i - 1) * step + +delay;
+      createPromise(position, newDelay)
         .then(value => {
           Notiflix.Notify.success(`${value}`);
         })
