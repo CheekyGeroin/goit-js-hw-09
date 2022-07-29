@@ -13,7 +13,7 @@ const options = {
   minuteIncrement: 1,
   onClose,
 };
-flatpickr(selector, options);
+flatpickr('#datetime-picker', options);
 function onClose(selectedDates) {
   if (currentTime > selectedDates[0]) {
     Notiflix.Notify.failure('Please choose a date in the future');
