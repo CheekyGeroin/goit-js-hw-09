@@ -42,7 +42,7 @@ function onClickBtn() {
   }
   function timer() {
     let today = new Date();
-    delta = deadLine - today - 1;
+    let delta = deadLine - today;
     const second = pad(Math.floor(delta / 1000) % 60);
     const minute = pad(Math.floor(delta / 1000 / 60) % 60);
     const hour = pad(Math.floor(delta / 1000 / 60 / 60) % 24);
