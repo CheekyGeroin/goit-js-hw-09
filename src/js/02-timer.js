@@ -4,7 +4,7 @@ import 'flatpickr/dist/flatpickr.min.css';
 const flatpickr = require('flatpickr');
 const currentTime = new Date();
 const btnStart = document.querySelector('button');
-const selector = document.querySelector('input#datetime-picker');
+const selector = document.querySelector('#datetime-picker');
 let deadLine = 0;
 const options = {
   enableTime: true,
@@ -13,7 +13,7 @@ const options = {
   minuteIncrement: 1,
   onClose,
 };
-flatpickr('#datetime-picker', options);
+flatpickr(selector, options);
 function onClose(selectedDates) {
   if (currentTime > selectedDates[0]) {
     Notiflix.Notify.failure('Please choose a date in the future');
